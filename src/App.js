@@ -377,7 +377,9 @@ function MovieList() {
   return (
     <div>
       <div className="movie-list">
-        {movieList.map((singleMovie) => (
+        {mo
+        
+        vieList.map((singleMovie) => (
           <Card variant="outlined" key={singleMovie.id}>
             <Movies
               movie={singleMovie}
