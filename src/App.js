@@ -25,6 +25,9 @@ import { useFormik } from "formik";
 // yup
 import * as yup from "yup";
 
+//api
+import { API } from "./source";
+
 import "./App.css";
 
 function App() {
@@ -98,7 +101,7 @@ function EditMovie() {
 
   // getting value from inputs ----------------------
   useEffect(() => {
-    fetch(`https://638df99faefc455fb2b139a4.mockapi.io/movies/${id}`, {
+    fetch(`${API}/movies/${id}`, {
       method: "GET",
     })
       .then((data) => data.json())
@@ -112,8 +115,10 @@ function EditMovie() {
   );
 }
 
+// __________________________________________________
 function FormEditMovie({ movie, movieId }) {
   const navigate = useNavigate();
+
   const formCheckYup = yup.object({
     name: yup.string().min(1).required(),
     rating: yup.number().min(0).max(10).required(),
@@ -130,7 +135,9 @@ function FormEditMovie({ movie, movieId }) {
       summary: movie.summary,
       trailer: movie.trailer,
     },
+
     validationSchema: formCheckYup,
+
     onSubmit: (value) => {
       console.log(value);
       saveChanges(value);
@@ -139,7 +146,7 @@ function FormEditMovie({ movie, movieId }) {
   });
 
   function saveChanges(value) {
-    fetch(`https://638df99faefc455fb2b139a4.mockapi.io/movies/${movieId}`, {
+    fetch(`${API}/movies/${movieId}`, {
       method: "PUT",
       body: JSON.stringify(value),
       headers: { "content-type": "application/json" },
@@ -254,7 +261,7 @@ function MovieDetil() {
   const [movie, setMovieList] = useState([]);
 
   useEffect(() => {
-    fetch(`https://638df99faefc455fb2b139a4.mockapi.io/movies/${id}`, {
+    fetch(`${API}/movies/${id}`, {
       method: "GET",
     })
       .then((data) => data.json())
@@ -355,7 +362,7 @@ function MovieList() {
   const [movieList, setMovieList] = useState([]);
 
   const data = () => {
-    fetch("https://638df99faefc455fb2b139a4.mockapi.io/movies", {
+    fetch(`${API}/movies`, {
       method: "GET",
     })
       .then((data) => data.json())
@@ -367,7 +374,7 @@ function MovieList() {
   }, []);
 
   const removeMovie = (id) => {
-    fetch(`https://638df99faefc455fb2b139a4.mockapi.io/movies/${id}`, {
+    fetch(`${API}/movies/${id}`, {
       method: "DELETE",
     }).then(() => data());
   };
@@ -377,15 +384,15 @@ function MovieList() {
   return (
     <div>
       <div className="movie-list">
-        {vieList.map((singleMovie) => (
+        {movieList.map((singleMovie) => (
           <Card variant="outlined" key={singleMovie.id}>
             <Movies
               movie={singleMovie}
-              index={singleMovie.id}
+              index={singleMovie._id}
               deleteButton={
                 <IconButton
                   aria-label="delete"
-                  onClick={() => removeMovie(singleMovie.id)}
+                  onClick={() => removeMovie(singleMovie._id)}
                   color={"error"}
                 >
                   <DeleteIcon />
@@ -394,7 +401,7 @@ function MovieList() {
               editButton={
                 <IconButton
                   aria-label="delete"
-                  onClick={() => navigate(`/movie/edit/${singleMovie.id}`)}
+                  onClick={() => navigate(`/movie/edit/${singleMovie._id}`)}
                   color={"error"}
                 >
                   <EditIcon />
@@ -510,9 +517,9 @@ function Form() {
     },
     validationSchema: formCheckYup,
     onSubmit: (value) => {
-      fetch("https://638df99faefc455fb2b139a4.mockapi.io/movies", {
+      fetch(`${API}/movies`, {
         method: "POST",
-        body: JSON.stringify(value),
+        body: JSON.stringify([value]),
         headers: { "content-type": "application/json" },
       }).then(() => navigate("/movie"));
     },
